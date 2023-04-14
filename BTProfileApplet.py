@@ -9,6 +9,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("GLib", "2.0")
 gi.require_version("Gio", "2.0")
+gi.require_version('MatePanelApplet', '4.0')
 from gi.repository import Gtk, GLib, Gio
 from gi.repository import MatePanelApplet
 import os
