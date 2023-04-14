@@ -1,0 +1,12 @@
+[Applet Factory]
+Id=BTProfileAppletFactory
+InProcess=false
+Location=/usr/share/mate-applets/btprofile-applet/BTProfileApplet.py
+Name=BT Profile Applet Factory
+Description=A BT Profile Applet factory
+
+[BTProfileApplet]
+Name=BT Profile Applet
+Description=Simple MATE panel applet that allows you to seamlessly switch between different Bluetooth audio profiles.
+Icon=audio-headset
+MateComponentId=OAFIID:MATE_BTProfileApplet
