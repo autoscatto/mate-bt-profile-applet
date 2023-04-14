@@ -1,0 +1,3 @@
+[D-BUS Service]
+Name=org.mate.panel.applet.BTProfileAppletFactory
+Exec=/usr/share/mate-applets/btprofile-applet/BTProfileApplet.py
