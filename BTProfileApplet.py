@@ -56,10 +56,11 @@ logger.addHandler(file_handler)
 
 class BTApplet:
     def __init__(self, applet, data, bus, objs, addr):
+        self.version = "0.2.0"
         self.applet = applet
         self.data = data
         self.settings_path = applet.get_preferences_path()
-        logger.debug(f"Settings path: {self.settings_path}")
+        logger.debug(f"Settings path: {self.settings_path}, v: {self.version}")
         self.dbus = bus
         self.addr = addr
         self.objs = objs
@@ -89,6 +90,7 @@ class BTApplet:
         self.set_device_profile(state)
 
     def set_switch_by_state(self, state):
+        self.switch.set_sensitive(True)
         is_active = state == STATE_ACTIVE
         self.label.set_markup(f"<small>{STATE_LABEL.get(state, STATE_IDLE)}</small>")
         self.switch.set_active(is_active)
@@ -114,6 +116,22 @@ class BTApplet:
         ) = args
         self.set_switch_by_state(changed_properties["State"])
 
+    def on_device_removed(self, *args, **kwargs):
+        (
+            dbus_connection,
+            sender,
+            object_path,
+            interface,
+            signal,
+            (changed_properties_interface, changed_properties),
+        ) = args
+        try:
+            addr = "/".join(changed_properties_interface.split("/")[:-1])
+            if addr == self.addr:
+                logger.debug("Device disconnected!")
+                self.switch.set_sensitive(False)
+        except Exception:
+            logger.error("Error!")
 
 def applet_factory(applet, iid, data):
     if iid != "BTProfileApplet":
@@ -141,6 +159,15 @@ def applet_factory(applet, iid, data):
         None,
         Gio.DBusSignalFlags.NONE,
         win.on_properties_changed
+    )
+    dbus.signal_subscribe(
+        BUS_NAME,
+        'org.freedesktop.DBus.ObjectManager',
+        'InterfacesRemoved',
+        None,
+        None,
+        Gio.DBusSignalFlags.NONE,
+        win.on_device_removed
     )
     logger.debug("applet constructed")
     return True
